@@ -16,11 +16,11 @@ const Sidebar = () => {
   
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutGrid size={20} />, path: "/" },
-    { id: 'products', label: 'Products', icon: <ShoppingBasket size={20} />, path: "/products" },
-    { id: 'orders', label: 'Orders', icon: <ShoppingCart size={20} />, path: "/orders" },
-    { id: 'payments', label: 'Payments', icon: <CreditCard size={20} />, path: "/payments" },
-    { id: 'customers', label: 'Customers', icon: <Users size={20} />, path: "/customers" },
-    { id: 'settings', label: 'Settings', icon: <Settings size={20} />, path: "/settings" },
+    { id: 'products', label: 'Products', icon: <ShoppingBasket size={20} />, path: "/product" },
+    { id: 'orders', label: 'Orders', icon: <ShoppingCart size={20} />, path: "/order" },
+    { id: 'payments', label: 'Payments', icon: <CreditCard size={20} />, path: "/payment" },
+    { id: 'customers', label: 'Customers', icon: <Users size={20} />, path: "/customer" },
+    { id: 'settings', label: 'Settings', icon: <Settings size={20} />, path: "/setting" },
     { id: 'logout', label: 'Logout', icon: <LogOut size={20} />, path: "/logout" }
   ];
   
@@ -31,7 +31,7 @@ const Sidebar = () => {
   useEffect(() => {
     
     if (location.pathname === '/') {
-      setActivePage('dashboard');
+      // setActivePage('dashboard');
       return;
     }
     
@@ -53,7 +53,7 @@ const Sidebar = () => {
   };
   
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen border-r border-gray-200 shadow-xl rounded-lg">
     
       <div className="bg-white w-16 md:w-64 shadow-sm h-full transition-all duration-300 ease-in-out">
       
