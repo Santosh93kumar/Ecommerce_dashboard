@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Calendar } from 'lucide-react';
+import profile from "../assets/picture.png"
 
 const Header = () => {
   const [searchText, setSearchText] = useState('');
@@ -40,11 +41,11 @@ const Header = () => {
           {/* User Profile */}
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-800 font-semibold">
-              SS
+              <img src={profile} alt="dd" className='rounded-full h-8 w-8'  />
             </div>
             <div className="hidden md:block">
-              <p className="text-sm font-semibold">Shubham Sharma</p>
-              <p className="text-xs text-gray-500">webdesignshubham@gmail.com</p>
+              <p className="text-sm font-semibold">Deepika Rai</p>
+              <p className="text-xs text-gray-500">reactdeveloperdeep@gmail.com</p>
             </div>
           </div>
         </div>
