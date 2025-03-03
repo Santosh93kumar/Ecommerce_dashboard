@@ -14,6 +14,7 @@ import Customerlayout from './Components/Customerlayout'
 import Customer from './Pages/customer/customer'
 import Settinglayout from './Components/Settinglayout'
 import Setting from './Pages/setting/Setting'
+import AddProduct from './Pages/product/AddProduct'
 function App() {
   const router = createBrowserRouter([
         {
@@ -50,7 +51,10 @@ function App() {
            { 
             path:"/product",
             element:<Product/>
-            }
+            }, { 
+              path:"add_product",
+              element:<AddProduct/>
+              }
           ]
         },
         //payment
