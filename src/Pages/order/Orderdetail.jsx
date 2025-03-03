@@ -32,6 +32,9 @@ function Orderdetail() {
                                 <p className='text-sm md:text-base text-center my-1.5'>$2023</p>
                             </div>
                         </div>
+                        <div className='flex w-full'>
+
+                        </div>
 
                     </div>
                     <div className='w-4/12 bg-white'>
@@ -46,35 +49,7 @@ function Orderdetail() {
                         </div>
                     </div>
                 </div>
-                <div className='w-full bg-white mt-1.5 flex'>
-                   <div className='w-9/12'>
-                    <div className='w-full'>
-                    <div className='w-4/12 flex'>
-                    <h3 className='text-gray-300 font-semibold'>Product</h3>
-                    <img src="https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?cs=srgb&dl=pexels-anjana-c-169994-674010.jpg&fm=jpg" className='h-16 w-14'  alt="" />
-                            <div className='flex flex-col'>
-                                <p className='text-base' >Kate Lau</p>
-                                <p className='text-xs'>san@gmail.com</p>
-
-                            </div>
-                    </div>
-                    <div className='w-3/12'>
-                        <h3 className='text-gray-300'>Total Amount</h3>
-                        <p>$122/23</p>
-                    </div>
-                    <div className='w-2/12'>
-                    <h3 className='text-gray-300'>Order item</h3>
-                        <p>01</p>
-                    </div>
-                    <div className='w-3/12'>
-                    <h3 className='text-gray-300'>Subtotal</h3>
-                    <p></p>
-                    </div>
-                    </div>
-                   </div>
-
-
-                </div>
+              
         </div>
      </div>
    </>
