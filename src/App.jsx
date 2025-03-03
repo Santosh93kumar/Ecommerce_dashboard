@@ -14,6 +14,7 @@ import Customerlayout from './Components/Customerlayout'
 import Customer from './Pages/customer/customer'
 import Settinglayout from './Components/Settinglayout'
 import Setting from './Pages/setting/Setting'
+import Paymentdetail from './Pages/payment/Paymentdetail'
 function App() {
   const router = createBrowserRouter([
         {
@@ -37,7 +38,7 @@ function App() {
               element: <Vieworder />,
             },
             {
-              path: "order_detail", // Nested route without leading slash
+              path: "/order/order_detail", // Nested route without leading slash
               element: <Orderdetail />,
             },
           ],
@@ -61,7 +62,10 @@ function App() {
             { 
               path:"/payment",
               element:<Payment/>
-              }
+            },{
+              path:'/payment/payment_detail',
+              element:<Paymentdetail/>
+            }
 
           ]
 
