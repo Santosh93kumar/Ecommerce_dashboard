@@ -59,7 +59,7 @@ function Vieworder() {
                 <hr />
                 {
                     detail.map((item)=>(
-                    <div className='w-full flex flex-row pt-2 text-base'>
+                    <div className='w-full flex flex-row pt-2 text-base text-gray-500'>
                     <div className='w-1/12'> 
                         <p className='text-base font-semibold text-center text-blue-400'>{item.order_id}
                         </p>
@@ -83,7 +83,7 @@ function Vieworder() {
                         <p className='text-center text-base font-semibold'>{item.spent}</p>
                     </div>
                     <div className='w-2/12 cursor-pointer' onClick={()=> navigate("/order/order_detail")} > 
-                        <a className= 'underline text-blue-400 flex justify-center text-base font-semibold ' >{item.action}</a>
+                        <a className= 'underline text-blue-400 flex justify-center text-base  ' >{item.action}</a>
                     </div>
                 </div>
                     ))
