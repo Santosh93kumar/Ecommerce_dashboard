@@ -17,14 +17,24 @@ import Setting from './Pages/setting/Setting'
 import AddProduct from './Pages/product/AddProduct'
 import CustomerDetails from './Pages/customer/CustomerDetails'
 import Paymentdetail from './Pages/payment/Paymentdetail'
+import UserRegistration from './Components/UserRegistartion'
+import Login from './Components/Login'
 function App() {
   const router = createBrowserRouter([
         {
           path:"/",
+          // element:<DashboardLayout/>,
+          element:<UserRegistration />,
+        },{
+          path:"/login",
+          element:<Login />
+        },
+        {
+          path:"/dashboard",
           element:<DashboardLayout/>,
           children:[
             {
-              path:"/",
+              path:"/dashboard",
               element:<Dashboard/>
             }
           ]
