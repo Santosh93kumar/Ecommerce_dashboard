@@ -4,12 +4,13 @@ import i1 from '../../assets/snekar.png'
 import i2 from '../../assets/bag.png'
 import i3 from '../../assets/coat.png'
 import i4 from '../../assets/denim.png'
+// import CheckLogin from "../Login";
 function Dashboard() {
   return (
    <>
    
 
-
+{/* <CheckLogin /> */}
 
     <div className="overflow-x-hidden w-full max-w-screen p-4 md:p-6 xl:p-8 bg-gray-100 min-h-screen">
       <h1 className="text-lg md:text-xl font-semibold my-3 ">DashBoard</h1>

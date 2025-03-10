@@ -15,7 +15,7 @@ const Sidebar = () => {
   const location = useLocation();
   
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: <LayoutGrid size={20} />, path: "/" },
+    { id: 'dashboard', label: 'Dashboard', icon: <LayoutGrid size={20} />, path: "/dashboard" },
     { id: 'products', label: 'Products', icon: <ShoppingBasket size={20} />, path: "/product" },
     { id: 'orders', label: 'Orders', icon: <ShoppingCart size={20} />, path: "/order" },
     { id: 'payments', label: 'Payments', icon: <CreditCard size={20} />, path: "/payment" },
