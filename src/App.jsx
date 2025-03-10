@@ -15,11 +15,14 @@ import Customer from './Pages/customer/customer'
 import Settinglayout from './Components/Settinglayout'
 import Setting from './Pages/setting/Setting'
 import AddProduct from './Pages/product/AddProduct'
+import UserRegistration from './Components/UserRegistration'
 function App() {
   const router = createBrowserRouter([
         {
           path:"/",
           element:<DashboardLayout/>,
+          // element:<UserRegistration />,
+
           children:[
             {
               path:"/",

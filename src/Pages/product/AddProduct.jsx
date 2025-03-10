@@ -1,268 +1,357 @@
-import React, { useState } from 'react';
-import { Calendar, Plus } from 'lucide-react';
+import React, { useState } from "react";
+import { Calendar, Plus, X } from "lucide-react";
+import axios from "axios";
 
 const AddProduct = () => {
-  // State for form inputs
-  const [productName, setProductName] = useState('');
-  const [shortDescription, setShortDescription] = useState('');
-  const [longDescription, setLongDescription] = useState('');
-  const [stock, setStock] = useState('');
-  const [price, setPrice] = useState('');
-  const [discount, setDiscount] = useState('');
-  const [discountEnabled, setDiscountEnabled] = useState(false);
-  const [category, setCategory] = useState('');
-  const [selectedTags, setSelectedTags] = useState(['Jacket', 'Caps', 'Socks', 'Hoodies']);
-  const [visibility, setVisibility] = useState('published');
-  const [scheduleDate, setScheduleDate] = useState('');
-  const [visibilityDate, setVisibilityDate] = useState('');
+  const [product, setProduct] = useState({
+    pname: "",
+    short_description: "",
+    long_description: "",
+    stock: "",
+    price: "",
+    discount: "",
+    discountEnabled: false,
+    category: "",
+    selectedTags: ["Jacket", "Caps", "Socks", "Hoodies"],
+    visibility: "Published",
+    discount_date: "",
+    scheduled_date: "",
+    images: [],
+  });
+  const [previewImages, setPreviewImages] = useState([]);
 
-  // Function to handle tag removal
-  const removeTag = (tagToRemove) => {
-    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setProduct({ ...product, [name]: type === "checkbox" ? checked : value });
   };
 
-  // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleImageChange = (e) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      return;
+    }
+  
+    const files = Array.from(e.target.files);
+    console.log("Selected Files:", files); // Debugging log
+  
+    setProduct((prev) => ({
+      ...prev,
+      images: [...prev.images, ...files], // Ensure File objects are stored
+    }));
+  
+    const imageUrls = files.map((file) => URL.createObjectURL(file));
+    setPreviewImages((prev) => [...prev, ...imageUrls]);
+  
+    console.log("Updated Product State:", product); // Debugging log
+  };
+  
+  
+
+  const removeImage = (index) => {
+    setProduct((prev) => ({
+      ...prev,
+      images: prev.images?.filter((_, i) => i !== index) || [], // Ensure fallback to []
+    }));
+  
+    setPreviewImages((prev) => prev?.filter((_, i) => i !== index) || []);
+  };
+  
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({
-      productName,
-      shortDescription,
-      longDescription,
-      stock,
-      price,
-      discount: discountEnabled ? discount : null,
-      category,
-      selectedTags,
-      visibility,
-      scheduleDate,
-      visibilityDate
+    
+    const formData = new FormData();
+    Object.keys(product).forEach((key) => {
+      if (key === "images") {
+        product[key].forEach((image) => {
+          formData.append("images", image);
+        });
+      } else {
+        formData.append(key, product[key]);
+      }
     });
+    
+    console.log("Form Data:", ...formData.entries());
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/product/new",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      if (response.data.status === 1) {
+        alert("Product details saved successfully!");
+        setProduct({
+          pname: "",
+          short_description: "",
+          long_description: "",
+          stock: "",
+          price: "",
+          discount: "",
+          discountEnabled: false,
+          category: "",
+          selectedTags: ["Jacket", "Caps", "Socks", "Hoodies"],
+          visibility: "Published",
+          discount_date: "",
+          scheduled_date: "",
+          images: [],
+        });
+        setPreviewImages([]);
+
+      } else {
+        alert("Error saving product details.");
+      }
+    } catch (error) {
+      console.error("Error submitting product data:", error);
+    }
+  };
+
+  const removeTag = (tagToRemove) => {
+    setProduct((prevData) => ({
+      ...prevData,
+      selectedTags: prevData.selectedTags.filter((tag) => tag !== tagToRemove),
+    }));
   };
 
   return (
     <div className="bg-gray-50 p-6 min-h-screen">
       <h1 className="text-2xl font-semibold mb-6">Add product</h1>
-      
-      <form onSubmit={handleSubmit} className="space-y-6">
+
+      <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-          {/* Basic Information Section */}
           <div className="md:col-span-3 space-y-6 bg-white p-6 rounded-lg">
             <h2 className="text-lg font-medium">Basic Information</h2>
-            
+
             <div>
               <input
                 type="text"
+                name="pname"
                 placeholder="Product Name"
                 className="w-full p-3 border border-gray-200 rounded-lg"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
+                value={product.pname}
+                onChange={handleChange}
               />
             </div>
-            
+
             <div>
               <textarea
+                name="short_description"
                 placeholder="Short Description"
                 className="w-full p-3 border border-gray-200 rounded-lg resize-none h-20"
-                value={shortDescription}
-                onChange={(e) => setShortDescription(e.target.value)}
+                value={product.short_description}
+                onChange={handleChange}
               />
             </div>
-            
+
             <div>
               <textarea
+                name="long_description"
                 placeholder="Long Description"
                 className="w-full p-3 border border-gray-200 rounded-lg resize-none h-32"
-                value={longDescription}
-                onChange={(e) => setLongDescription(e.target.value)}
+                value={product.long_description}
+                onChange={handleChange}
               />
             </div>
           </div>
-          
-          {/* Product Image Section */}
+
           <div className="md:col-span-2 space-y-6 bg-white p-6 rounded-lg">
             <h2 className="text-lg font-medium">Product Image</h2>
-            
+
             <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 flex flex-col items-center justify-center text-center h-64">
-              <div className="text-gray-400 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <p className="text-gray-700 font-medium">Upload your product image.</p>
-              <p className="text-gray-400 text-sm">Only PNG, JPG format allowed.</p>
-              <p className="text-gray-400 text-sm">300×300 pixels are recommended.</p>
+              <input
+                type="file"
+                name="images"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+                className="hidden"
+                id="imageUpload"
+              />
+              <label htmlFor="imageUpload" className="cursor-pointer">
+                <Plus className="h-6 w-6 text-gray-400 mx-auto" />
+                <p className="text-gray-700 font-medium">Upload your product images.</p>
+                <p className="text-gray-400 text-sm">PNG, JPG formats allowed.</p>
+              </label>
             </div>
-            
-            <div className="grid grid-cols-4 gap-2">
-              <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+            {previewImages.length > 0 && (
+              <div className="grid grid-cols-4 gap-2 mt-4">
+                {previewImages.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={image}
+                      alt="Product Preview"
+                      className="w-full h-20 object-cover rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                      onClick={() => removeImage(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
               </div>
-              <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-center bg-gray-50">
-                <Plus className="h-6 w-6 text-gray-400" />
-              </div>
-            </div>
+            )}
           </div>
         </div>
-        
-        {/* Stock and Pricing Section */}
+
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <div className="bg-white md:col-span-3 p-6 rounded-lg space-y-6">
-          <h2 className="text-lg font-medium">Stock and pricing</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <input
-                type="text"
-                placeholder="Stock"
-                className="w-full p-3 border border-gray-200 rounded-lg"
-                value={stock}
-                onChange={(e) => setStock(e.target.value)}
-              />
-            </div>
-            <div>
-              <input
-                type="text"
-                placeholder="Price"
-                className="w-full p-3 border border-gray-200 rounded-lg"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="scheduleDiscount"
-              checked={discountEnabled}
-              onChange={() => setDiscountEnabled(!discountEnabled)}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-            />
-            <label htmlFor="scheduleDiscount" className="ml-2 text-sm">Schedule a discount</label>
-          </div>
-          
-          {discountEnabled && (
+          <div className="bg-white md:col-span-3 p-6 rounded-lg space-y-6">
+            <h2 className="text-lg font-medium">Stock and pricing</h2>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <input
                   type="text"
-                  placeholder="Discount"
+                  name="stock"
+                  placeholder="Stock"
                   className="w-full p-3 border border-gray-200 rounded-lg"
-                  value={discount}
-                  onChange={(e) => setDiscount(e.target.value)}
+                  value={product.stock}
+                  onChange={handleChange}
                 />
               </div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <Calendar className="h-5 w-5 text-gray-400" />
-                </div>
+              <div>
                 <input
-                  type="date"
-                  placeholder="Select date"
-                  className="w-full p-3 pl-12 border border-gray-200 rounded-lg"
-                  value={scheduleDate}
-                  onChange={(e) => setScheduleDate(e.target.value)}
+                  type="text"
+                  name="price"
+                  placeholder="Price"
+                  className="w-full p-3 border border-gray-200 rounded-lg"
+                  value={product.price}
+                  onChange={handleChange}
                 />
               </div>
             </div>
-          )}
-        </div>
-         {/* Visibility Section */}
-         <div className="bg-white md:col-span-2 p-6 rounded-lg space-y-6">
+
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="scheduleDiscount"
+                name="discountEnabled"
+                checked={product.discountEnabled}
+                onChange={handleChange}
+                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+              />
+              <label htmlFor="scheduleDiscount" className="ml-2 text-sm">
+                Schedule a discount
+              </label>
+            </div>
+
+            {product.discountEnabled && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <input
+                    type="text"
+                    name="discount"
+                    placeholder="Discount"
+                    className="w-full p-3 border border-gray-200 rounded-lg"
+                    value={product.discount}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <Calendar className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="date"
+                    name="discount_date"
+                    placeholder="Select date"
+                    className="w-full p-3 pl-12 border border-gray-200 rounded-lg"
+                    value={product.discount_date}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-white md:col-span-2 p-6 rounded-lg space-y-6">
             <h2 className="text-lg font-medium">Visibility</h2>
-            
+
+            <div className="space-y-2"></div>
+
             <div className="space-y-2">
               <div className="flex items-center">
                 <input
                   type="radio"
-                  id="published"
+                  id="Published"
                   name="visibility"
-                  value="published"
-                  checked={visibility === 'published'}
-                  onChange={() => setVisibility('published')}
+                  value="Published"
+                  checked={product.visibility === "Published"}
+                  onChange={handleChange}
                   className="h-4 w-4 text-blue-600 border-gray-300"
                 />
-                <label htmlFor="published" className="ml-2">Published</label>
+                <label htmlFor="Published" className="ml-2">Published</label>
               </div>
-              
+
               <div className="flex items-center">
                 <input
                   type="radio"
                   id="scheduled"
                   name="visibility"
-                  value="scheduled"
-                  checked={visibility === 'scheduled'}
-                  onChange={() => setVisibility('scheduled')}
+                  value="Scheduled"
+                  checked={product.visibility === "Scheduled"}
+                  onChange={handleChange}
                   className="h-4 w-4 text-blue-600 border-gray-300"
                 />
-                <label htmlFor="scheduled" className="ml-2">Scheduled</label>
+                <label htmlFor="Scheduled" className="ml-2">Scheduled</label>
               </div>
-              
+
               <div className="flex items-center">
                 <input
                   type="radio"
-                  id="hidden"
+                  id="Hidden"
                   name="visibility"
-                  value="hidden"
-                  checked={visibility === 'hidden'}
-                  onChange={() => setVisibility('hidden')}
+                  value="Hidden"
+                  checked={product.visibility === "Hidden"}
+                  onChange={handleChange}
                   className="h-4 w-4 text-blue-600 border-gray-300"
                 />
-                <label htmlFor="hidden" className="ml-2">Hidden</label>
+                <label htmlFor="Hidden" className="ml-2">Hidden</label>
               </div>
             </div>
-            
-            {visibility === 'scheduled' && (
+
+            {product.visibility === "Scheduled" && (
               <div className="relative">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                   <Calendar className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   type="date"
+                  name="scheduled_date"
                   placeholder="Select date"
                   className="w-full p-3 pl-12 border border-gray-200 rounded-lg"
-                  value={visibilityDate}
-                  onChange={(e) => setVisibilityDate(e.target.value)}
+                  value={product.scheduled_date}
+                  onChange={handleChange}
                 />
               </div>
             )}
           </div>
-
         </div>
-        
-        {/* Grid for Category and Visibility */}
+
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-          {/* Category Section */}
-          <div className="bg-white p-6 md:col-span-3  rounded-lg space-y-6">
+          <div className="bg-white p-6 md:col-span-3 rounded-lg space-y-6">
             <h2 className="text-lg font-medium">Category</h2>
-            
+
             <div>
               <input
                 type="text"
+                name="category"
                 placeholder="Search or create category"
                 className="w-full p-3 border border-gray-200 rounded-lg"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                value={product.category}
+                onChange={handleChange}
               />
             </div>
-            
+
             <div className="flex flex-wrap gap-2">
-              {selectedTags.map((tag) => (
-                <div key={tag} className="bg-[#EAEDFF] rounded-full py-1 px-3 flex items-center text-sm">
-                  <button 
-                    type="button" 
+              {product.selectedTags.map((tag) => (
+                <div
+                  key={tag}
+                  className="bg-[#EAEDFF] rounded-full py-1 px-3 flex items-center text-sm"
+                >
+                  <button
+                    type="button"
                     className="mr-1 text-gray-500"
                     onClick={() => removeTag(tag)}
                   >
@@ -273,70 +362,8 @@ const AddProduct = () => {
               ))}
             </div>
           </div>
-          
-          {/* Visibility Section */}
-          {/* <div className="bg-white p-6 rounded-lg space-y-6">
-            <h2 className="text-lg font-medium">Visibility</h2>
-            
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="published"
-                  name="visibility"
-                  value="published"
-                  checked={visibility === 'published'}
-                  onChange={() => setVisibility('published')}
-                  className="h-4 w-4 text-blue-600 border-gray-300"
-                />
-                <label htmlFor="published" className="ml-2">Published</label>
-              </div>
-              
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="scheduled"
-                  name="visibility"
-                  value="scheduled"
-                  checked={visibility === 'scheduled'}
-                  onChange={() => setVisibility('scheduled')}
-                  className="h-4 w-4 text-blue-600 border-gray-300"
-                />
-                <label htmlFor="scheduled" className="ml-2">Scheduled</label>
-              </div>
-              
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="hidden"
-                  name="visibility"
-                  value="hidden"
-                  checked={visibility === 'hidden'}
-                  onChange={() => setVisibility('hidden')}
-                  className="h-4 w-4 text-blue-600 border-gray-300"
-                />
-                <label htmlFor="hidden" className="ml-2">Hidden</label>
-              </div>
-            </div>
-            
-            {visibility === 'scheduled' && (
-              <div className="relative">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <Calendar className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="date"
-                  placeholder="Select date"
-                  className="w-full p-3 pl-12 border border-gray-200 rounded-lg"
-                  value={visibilityDate}
-                  onChange={(e) => setVisibilityDate(e.target.value)}
-                />
-              </div>
-            )}
-          </div> */}
         </div>
-        
-        {/* Action Buttons */}
+
         <div className="flex justify-end space-x-4">
           <button
             type="button"
@@ -351,7 +378,7 @@ const AddProduct = () => {
             Add product
           </button>
         </div>
-      </form>
+      </form>    
     </div>
   );
 };
